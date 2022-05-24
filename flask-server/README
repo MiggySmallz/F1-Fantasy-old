@@ -1,0 +1,2 @@
+start env -> f1Fantasy\Scripts\activate
+start server -> python server.py
