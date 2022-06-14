@@ -3,38 +3,43 @@ import React from 'react'
 import './Navbar.css'
 // import { Container, Nav } from "reactstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Navbar, Nav, NavDropdown, Container} from "react-bootstrap"
 
 
-class Navbar extends React.Component {
+class Navigation extends React.Component {
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a className="navbar-brand" href="google.ca">F1 Fantasy </a>
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarText">
-                <ul className="navbar-nav mr-auto">
-                <li className="nav-item active">
-                    <a className="nav-link" href="google.ca">Home <span className="sr-only">(current)</span></a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="google.ca">Features</a>
-                </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="google.ca">Pricing</a>
-                </li>
-                </ul>
-                <span className="navbar-text">
-                Navbar text with an inline element
-                </span>
-            </div>
-            </nav>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Container>
+            <Navbar.Brand href="Home">F1 Fantasy</Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="me-auto">
+                <Nav.Link href="Home">Home</Nav.Link>
+                <Nav.Link href="Stats">Stats</Nav.Link>
+                <Nav.Link href="Fantasy">Fantasy</Nav.Link>
+                <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
+                    <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                    <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+                    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+                </NavDropdown>
+                </Nav>
+                <Nav>
+                <Nav.Link href="#deets">More deets</Nav.Link>
+                <Nav.Link eventKey={2} href="#memes">
+                    Dank memes
+                </Nav.Link>
+                </Nav>
+            </Navbar.Collapse>
+            </Container>
+            </Navbar>
         )
     }
 }
 
-export default Navbar
+export default Navigation
 
 

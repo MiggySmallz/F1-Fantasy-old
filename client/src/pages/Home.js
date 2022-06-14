@@ -5,20 +5,18 @@ function Home(){
   
 
   const [data, setData] = useState("")
-  const [driverFN, setDriverFN] = useState([])
   const didMount = useRef(false);
+  // const [img, setImg] = useState();
 
   useEffect(() => {
     if (!didMount.current) {
-      getApi()
+      getApi();
+      // getPic();
       didMount.current = true;
       return;
     }
 
     // test()
-
-    
-
     
   },[data])
 
@@ -30,46 +28,33 @@ function Home(){
     ).then(
       data => {
         setData(data)
-        console.log(data)
+        console.log(data.result[0])
       }
-      
     )
   }
 
-  
-
-
-  // async function test(){
-
-  //   var driver = []
-
-  //   for (const [key, value] of Object.entries(data.result.FirstName)) {
-  //     console.log(`${key}: ${value}`);
-  //     driver.push({
-  //       key:   key,
-  //       value: value
-  //     });
-  //   }
-
-  //   setDriverFN(driver)
-
-  //   console.log(driverFN)
-
+  // async function getPic(){
+  //   const res = await fetch("http://localhost:5000/get_image");
+  //   const imageBlob = await res.blob();
+  //   const imageObjectURL = URL.createObjectURL(imageBlob);
+  //   setImg(imageObjectURL);
   // }
+
 
 
   return(
     <div>
-      {/* <button onClick={() => test()}>Click me</button> */}
-
-      {(typeof data.Abbreviation === 'undefined') ? (
+      
+      {(typeof data.result === 'undefined') ? (
         <p>Loading...</p>
       ) : (
-        Object.entries(data.Abbreviation).map( ([key, value]) => <div>Key is:{key} Value is:{value}</div> )
+
+        Object.entries(data.result[0].Abbreviation)
+        .map( ([key, value]) => `My key is ${key} and my value is ${value}` )
       )}
 
+      
       <div>
-
         <table className="table table-bordered" id="shopping-cart">
           <thead>
             <tr>
@@ -79,33 +64,26 @@ function Home(){
             </tr>
           </thead>
           <tbody>
-            {/* {this.state.items.map((item, index) => (
-              
-                <tr key={item.id}>
-                  <td>{item.item_name}</td>
-                  <td>{item.item_price}</td>
-                  <td>{item.item_quantity}</td>
-                  <td class="btnCell">
-                  <button onClick={()=>this.itemInc(item.item_id)} type="button" class="btn btn-success">Add 1</button>
-                  <button onClick={()=>this.itemDec(item.item_id)} type="button" class="btn btn-danger">Remove 1</button>
-                  </td>
-                </tr>
-            ))} */}
-            {Object.entries(data).map( ([key, value]) => 
-              <tr key={key}>
-                <td>{value.Abbreviation}</td>
-                <td>{value.Abbreviation}</td>
-                <td>{value.Abbreviation}</td>
-              </tr> 
+            {(typeof data.result === 'undefined') ? (
+              <p>Loading...</p>
+            ) : (
+
+
+              Object.entries(data.result[0].FullName).map(([key, value1]) => {
+                
+                return (
+                    <tr>
+                        <td>{value1}</td>
+                        <td>{data.result[0].Abbreviation[key]}</td>
+                        <td>{data.result[0].DriverNumber[key]}</td>
+                    </tr>
+                )
+              })
             )}
 
           </tbody>
         </table>
       </div>
-
-
-
-
     </div>
 
     

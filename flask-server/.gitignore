@@ -1,0 +1,7 @@
+.env
+.venv
+env/
+/node_modules
+/Lib
+/f1Fantasy
+/cache
