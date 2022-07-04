@@ -1,3 +1,4 @@
+from urllib import response
 from flask import Flask, jsonify, send_file, request, url_for
 from wsgiref.validate import validator
 import numpy as np
@@ -13,9 +14,12 @@ from fastf1 import plotting
 plotting.setup_mpl()
 from timple.timedelta import strftimedelta
 import unicodedata
-
 from flask import Flask
 from flask_cors import CORS, cross_origin
+import os
+import pymysql
+from dotenv import load_dotenv
+import secrets
 
 app = Flask(__name__)
 # app.config['JSON_SORT_KEYS'] = False
@@ -127,37 +131,144 @@ def sendYear():
     
     # print(races)
     return jsonify(races=races, year=int(data["year"]))
-   
+
+@app.route('/signUp', methods = ['POST'])
+def signUp():
+
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    cur.execute("INSERT INTO users (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
+    conn.commit()
+
+    return "done"
+
+@app.route('/logIn', methods = ['GET', 'POST'])
+def logIn():
+
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    cur.execute("SELECT count(*) FROM users WHERE email = %s", (data["email"]))
+    result=cur.fetchone()
+    email=result[0]
+    cur.execute("SELECT count(*) FROM users WHERE pass = %s", (data["pass"]))
+    result=cur.fetchone()
+    password=result[0]
+    print(email > 0 and password > 0)
+
+    # cur.execute("INSERT INTO test2 (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
+    
+
+    if email > 0 and password > 0:
+        token=secrets.token_urlsafe(10)
+        cur.execute("UPDATE users SET token = %s WHERE email = %s", (token, data["email"]))
+        conn.commit()
+        return jsonify(loginVerification=True, token=token)
+    else:
+        conn.commit()
+        return jsonify(loginVerification=False)
+
+@app.route('/getUserName', methods = ['GET', 'POST'])
+def getUserName():
+
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    # print(data["token"])
+    cur.execute("SELECT fname, lname FROM users WHERE token = %s", (data["token"]))
+    result=cur.fetchall()
+
+    # cur.execute("INSERT INTO test2 (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
+
+    return jsonify(name=result[0][0] + " " + result[0][1])  
+
+@app.route('/driversInfo', methods = ['GET', 'POST'])
+def driversInfo():
+
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    # print(data["token"])
+    cur.execute("SELECT * FROM drivers")
+    result=cur.fetchall()
+
+    # cur.execute("INSERT INTO test2 (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
+
+    driversList = []
+
+    for drivers in result:
+        driversList.append({"id": drivers[0], "driver": drivers[1], "driverImg": drivers[2], "cost": drivers[3]})
+
+    return jsonify(driverList=driversList) 
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# abu_dhabi_race.load();
-# laps_r = abu_dhabi_race.laps
-
-
-# driver1 = 'PER'
-# driver2 = 'VER'
-
-# ham_fastest_lap = laps_r.pick_driver(driver1).pick_fastest()
-# ham_car_data = ham_fastest_lap.get_car_data()
-# ver_fastest_lap = laps_r.pick_driver(driver2).pick_fastest()
-# ver_car_data = ver_fastest_lap.get_car_data()
-
-# h = ham_car_data['Time']
-# v = ver_car_data['Time']
-
-# velocityH = ham_car_data['Speed']
-# velocityV = ver_car_data['Speed']
-# fig, ax = plt.subplots(figsize=(12,8))
-# ax.plot(h, velocityH, label=driver1, color='cyan')
-# ax.plot(v, velocityV, label=driver2, color='red')
-
-# ax.set_xlabel('Time')
-# ax.set_ylabel('Speed [Km/h]')
-# ax.set_title("Hamilton VS Verstappin fastest lap")
-# ax.legend()
-# plt.show()
-
 
 

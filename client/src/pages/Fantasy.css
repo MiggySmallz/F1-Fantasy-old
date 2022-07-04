@@ -1,0 +1,94 @@
+.container-fantasy{
+    display: flex;
+    justify-content: center;
+    width: auto;
+    flex-wrap: wrap;
+}
+
+.item-container{
+    background-color: rgb(62, 62, 73);
+    margin: 20px;
+    height: 6em;
+    width: auto;
+    display: flex; 
+}
+
+.item-container:hover{
+    background-color: rgb(92, 92, 106);
+}
+
+.driverTitle{
+    font-size: 24px;
+    margin-left: 0.4em;
+    color: white;
+}
+
+.driverImg{
+    max-height: 6em;
+    max-width: 6em;
+}
+
+.driverList{
+    margin-top: 1em;
+    width: 30em;
+    max-height: 77vh;
+    overflow-y: scroll;
+    background-color: rgb(41, 41, 49);
+}
+
+.progressBar{
+    /* background-color: green; */
+    width: 65em;
+    /* height: 10px; */
+    /* border-radius: 5px; */
+    align-self: center;
+    margin-left: 0.5em;
+}
+
+.budget{
+    margin-top: 1em;
+    display: flex;
+}
+
+.break{
+    flex-basis: 100%;
+    width: 0;
+}
+
+.selectorButton{
+    width: 10em;
+    height: 2.5em;
+    align-self: center;
+    margin: 1em 1em 0em;
+    border-radius: 5px;
+    background-color: rgb(71, 78, 95);
+    color: white;
+    border-color: rgb(71, 78, 95);
+}
+
+.selectorButton:hover{
+    background-color: rgb(87, 94, 109);
+}
+
+#btnOn{
+    background-color: rgb(115, 123, 140);
+}
+
+#btnOff{
+    background-color: rgb(71, 78, 95);
+}
+
+.selectorButtons{
+    text-align: center;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 10px;
+  }
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.364);
+  }
+

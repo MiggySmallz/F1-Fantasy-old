@@ -7,7 +7,43 @@ import {Navbar, Nav, NavDropdown, Container} from "react-bootstrap"
 
 
 class Navigation extends React.Component {
+    
+    // constructor(props) {
+    //     super(props);
+    //     this.name = " ";
+    //   }
 
+    // // useEffect(() => {
+    // //     console.log("ddddddd")
+    // // }, [name])
+
+    // componentDidMount(){
+    //     this.setState({name : "hhhhhhhhhhhhhh"})
+    //     // if (localStorage.getItem('token') != null){
+    //     //     this.setState({name : "hhhhhhhhhhhhhh"})
+    //     console.log("--" + this.name + "--")
+    //     // }
+        
+    // }
+
+    // // componentDidUpdate(){
+    // //     if (this.name != " "){
+    // //         if (localStorage.getItem('token') != null){
+    // //             this.setState({name : "hhhhhhhhhhhhhh"})
+    // //             console.log("-sss-" + this.name + "-sss-")
+    // //         }
+    // //         console.log("updated")
+    // //     }
+        
+    // // }
+    
+
+    handleClick() {
+        localStorage.removeItem("token");
+        window.location.reload();
+      }
+
+    
     render() {
         return (
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -27,13 +63,19 @@ class Navigation extends React.Component {
                     <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
                 </NavDropdown>
                 </Nav>
-                <Nav>
-                <Nav.Link href="#deets">More deets</Nav.Link>
-                <Nav.Link eventKey={2} href="#memes">
-                    Dank memes
-                </Nav.Link>
-                </Nav>
+                
             </Navbar.Collapse>
+            {this.props.loggedIn ? 
+            <NavDropdown title={this.props.loggedIn} className="dropdown">
+            <NavDropdown.Item href="/Profile">Profile</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="/" onClick={this.handleClick}>Log Out</NavDropdown.Item>
+            </NavDropdown> : 
+                <Nav>
+                    <Nav.Link href="SignUp">Sign Up</Nav.Link>
+                    <Nav.Link href="LogIn">Log In</Nav.Link>
+                </Nav>
+            }
             </Container>
             </Navbar>
         )

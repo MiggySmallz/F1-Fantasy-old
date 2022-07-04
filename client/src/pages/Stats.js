@@ -57,8 +57,8 @@ function Stats(){
   }
 
   async function getPic(){
-    const res = await fetch("http://localhost:5000/get_image");
-    const imageBlob = await res.blob();
+    const response = await fetch("http://localhost:5000/get_image");
+    const imageBlob = await response.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImg(imageObjectURL);
   }
@@ -151,7 +151,7 @@ function Stats(){
           <tbody>
 
             {(typeof data.result === 'undefined') ? (
-              <p>Waiting for selection...</p>
+              <tr>Waiting for selection...</tr>
             ) : (
 
               Object.entries(data.position).map(([key, value1]) => {

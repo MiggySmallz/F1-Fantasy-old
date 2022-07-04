@@ -1,3 +1,4 @@
+from click import password_option
 from flask import Flask, jsonify
 from wsgiref.validate import validator
 import numpy as np
@@ -13,8 +14,15 @@ from fastf1 import plotting
 plotting.setup_mpl()
 from timple.timedelta import strftimedelta
 import unicodedata
-
 import json
+import boto3
+import mysql.connector
+import sys
+import os
+import pymysql
+from dotenv import load_dotenv
+
+
 
 
 
@@ -67,7 +75,7 @@ def raceStats():
     print(abu_dhabi_race.results.to_dict())
 
 
-def test():
+def test1():
     fastf1.Cache.enable_cache('C:/Users/mnobr/Desktop/Projects/F1-Fantasy/flask-server/cache')
     
     abu_dhabi_race = fastf1.get_session(2022, 'Australia', 'R')
@@ -93,8 +101,49 @@ def test():
     
     
     print(raceResults)
+
+def load_cache(year):
+    fastf1.Cache.enable_cache('C:/Users/mnobr/Desktop/Projects/F1-Fantasy/flask-server/cache')
     
-test()
+    result = None
+    race_num = 1
+
+    while result == None:
+        try:
+            race = fastf1.get_session(year, race_num, 'R')
+            race.load()
+            a = race.event.EventDate
+            print(a)
+            race_num += 1
+        except:
+            result = "error"
+    
+
+
+def testDB():
+    
+
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    cur.execute("INSERT INTO test2 (id, fname, lname, email, pass) VALUES (1, 'Miguel', 'Nobre', 'mnobre24@gmail.com', '1234qwer')")
+    conn.commit()
+
+testDB()
 # raceStats()
 
 

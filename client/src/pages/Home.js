@@ -2,8 +2,6 @@ import React, {useState, useEffect, useRef} from 'react'
 
 function Home(){
 
-  
-
   const [data, setData] = useState("")
   const didMount = useRef(false);
   // const [img, setImg] = useState();
