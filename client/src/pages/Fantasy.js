@@ -69,30 +69,55 @@ function Fantasy(){
   //   {driver: 'Yuki Tsunoda', driverImg: Tsunoda, key:20, cost: 8300000}
   // ]);
 
-  const [drivers2, setDrivers2] = useState([
-    {constructor: 'Red Bull', constructorImg: Hamilton, id:1, cost: 30000000}
+  const [constructors, setConstructors] = useState([
+    // {constructor: 'Red Bull', constructorImg: "https://f1-driver-images.s3.us-east-2.amazonaws.com/Lewis_Hamilton.png", id:1, cost: 30000000}
     
   ]);
 
   const [drivers, setDrivers] = useState([])
 
-  const [driverList, setDriverList] = useState([]);
+  const [teamList, setTeamList] = useState([])
+
+  const [hasConstructor, setHasConstructor] = useState(false)
 
   const addDriver = (info) =>{
-    if (driverList.length<4 && budget-info.cost>0){
+    if (((teamList.length<5 && hasConstructor===false) || (teamList.length<6 && hasConstructor===true)) && budget-info.cost>0){
       return(
-        setDriverList([...driverList, info]),
+        setTeamList([...teamList, info]),
         setDrivers(drivers.filter(item => item.driver !== info.driver)),
+        setBudget(budget-info.cost)
+        // console.log(teamList)
+        )
+      }     
+  }
+
+  const addConstructor = (info) =>{
+    if (teamList.length<6 && budget-info.cost>0 && hasConstructor===false){
+      return(
+        setTeamList([...teamList, info]),
+        setConstructors(constructors.filter(item => item.constructor !== info.constructor)),
         setBudget(budget-info.cost),
-        console.log(driverList)
+        setHasConstructor(true)
+        // console.log(teamList)
         )
       }     
   }
 
   const removeDriver = (info) => (
-    setDriverList(driverList.filter(item => item.driver !== info.driver)),
+    setTeamList(teamList.filter(item => item.driver !== info.driver)),
     setDrivers([...drivers, info]),
     setBudget(budget+info.cost)
+  )
+
+  const removeConstructor = (info) => (
+    setTeamList(teamList.filter(item => item.constructor !== info.constructor)),
+    setConstructors([...constructors, info]),
+    setBudget(budget+info.cost),
+    setHasConstructor(false)
+  )
+
+  const saveTeam = () => (
+    console.log(teamList)
   )
 
 
@@ -107,7 +132,7 @@ function Fantasy(){
     body: JSON.stringify({}) // body data type must match "Content-Type" header
   })
   .then(response => response.json())
-  .then(data => setDrivers(data["driverList"]))
+  .then(data => {setDrivers(data["driverList"]); setConstructors(data["constructorList"])})
   .then(console.log(drivers));
   }
 
@@ -123,61 +148,92 @@ function Fantasy(){
       <div className='budget'>Budget:<ProgressBar className='progressBar'  variant="success" now={currentBudget} /*label={`${budget}`}*//>${convertBudget(budget)}</div>
       <div className='break'></div>
       
-      <div className='driverList'>
-        {/* <View > */}
-          { driverList.map((item) =>{
-            return(
-              <div onClick={() => removeDriver(item)} className='item-container'>
-                
-                <img className='driverImg' src={item.driverImg} width="500" height="600"></img>
-                
-                <div className='driverTitle'>
-                  {item.driver}
+      <div className='teamList'>
+          { teamList.sort((a, b) => a.id > b.id ? 1 : -1).map((item) =>{
+            if (item.driverImg != null){
+              return(
+                <div onClick={() => removeDriver(item)} className='item-container'>
+                  <img className='driverImg' src={item.driverImg} width="500" height="600"></img>
+                  <div className='driverTitle'>
+                    {item.driver}
+                  </div>
+                  <div className='priceLabelDiv'>
+                    <p className='priceLabel'>${convertBudget(item.cost)}</p>
+                  </div>
+                </div>                
+              )
+            }
+            else{
+              return(
+                <div onClick={() => removeConstructor(item)} className='item-container'>
+                  <img className='constructorImg' src={item.constructorImg} width="500" height="600"></img>
+                  <div className='driverTitle'>
+                    {item.constructor}
+                  </div>
+                  <div className='priceLabelDiv'>
+                    <p className='priceLabel'>${convertBudget(item.cost)}</p>
+                  </div>
                 </div>
-
-              </div>
-            )
+              )
+            }
+            // return(
+            //   <div onClick={() => removeDriver(item)} className='item-container'>
+            //     <img className='driverImg' src={icon} width="500" height="600"></img>
+            //     <div className='driverTitle'>
+            //       {item.driver}
+            //     </div>
+            //   </div>
+            // )
           })}
-        {/* </View> */}
+          <div className="selectorButtons">
+            <button className="saveTeamButton" onClick={() => saveTeam()} >Save Team</button>
+          </div>
       </div>
       <div className='break-column'></div>
-      <div className='driverList'>
-        {/* <View > */}
-          <div className="selectorButtons">
-            <button id={driverBtn} className="selectorButton" onClick={() => {setDriverBtn((driverBtn) => (driverBtn === "btnOff" ? "btnOn" : "btnOff")); setConstructorBtn((constructorBtn) => (constructorBtn === "btnOn" ? "btnOff" : "btnOn"))}} >Drivers</button>
-            <button id={constructorBtn} className="selectorButton" onClick={() => {setConstructorBtn((constructorBtn) => (constructorBtn === "btnOff" ? "btnOn" : "btnOff")); setDriverBtn((driverBtn) => (driverBtn === "btnOn" ? "btnOff" : "btnOn"))}} >Constructors</button></div>
+      <div className='teamList'>
+      <div className="selectorButtons">
+        <button id={driverBtn} className="selectorButton" onClick={() => {setDriverBtn((driverBtn) => (driverBtn === "btnOff" ? "btnOn" : "btnOff")); setConstructorBtn((constructorBtn) => (constructorBtn === "btnOn" ? "btnOff" : "btnOn"))}} >Drivers</button>
+        <button id={constructorBtn} className="selectorButton" onClick={() => {setConstructorBtn((constructorBtn) => (constructorBtn === "btnOff" ? "btnOn" : "btnOff")); setDriverBtn((driverBtn) => (driverBtn === "btnOn" ? "btnOff" : "btnOn"))}} >Constructors</button>
+      </div>
           
 
           { (driverBtn === "btnOn")?
-          (drivers.sort((a, b) => a.driver > b.driver ? 1 : -1).map((item) =>{
+          (drivers.sort((a, b) => a.cost < b.cost ? 1 : -1).map((item) =>{
             return(
               <div onClick={() => addDriver(item)} className='item-container'>
                 
                 <img className='driverImg' src={item.driverImg} width="500" height="600"></img>
-                
+                 
                 <div className='driverTitle'>
                   {item.driver}
+                </div>
+
+                <div className='priceLabelDiv'>
+                  <p className='priceLabel'>${convertBudget(item.cost)}</p>
                 </div>
                 
               </div>
             )
           }))
           :
-          (drivers2.sort((a, b) => a.driver > b.driver ? 1 : -1).map((item) =>{
+          (constructors.sort((a, b) => a.cost < b.cost ? 1 : -1).map((item) =>{
             return(
-              <div onClick={() => addDriver(item)} className='item-container'>
+              <div onClick={() => {addConstructor(item); console.log(item)}} className='item-container'>
                 
-                <img className='driverImg' src={item.constructorImg} width="500" height="600"></img>
+                <img className='constructorImg' src={item.constructorImg} width="500" height="600"></img>
                 
                 <div className='driverTitle'>
                   {item.constructor}
+                </div>
+
+                <div className='priceLabelDiv'>
+                  <p className='priceLabel'>${convertBudget(item.cost)}</p>
                 </div>
                 
               </div>
             )
           }))
           }
-        {/* </View> */}
       </div>
       
     </div>

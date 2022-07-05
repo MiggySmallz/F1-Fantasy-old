@@ -3,11 +3,13 @@
     justify-content: center;
     width: auto;
     flex-wrap: wrap;
+    background-color: rgb(41, 41, 49);
+    height: 100vh;
 }
 
 .item-container{
     background-color: rgb(62, 62, 73);
-    margin: 20px;
+    margin: 20px 20px 0px 20px;
     height: 6em;
     width: auto;
     display: flex; 
@@ -21,17 +23,36 @@
     font-size: 24px;
     margin-left: 0.4em;
     color: white;
+    min-width: 55%;
 }
 
 .driverImg{
-    max-height: 6em;
+    height: 6em;
     max-width: 6em;
 }
 
-.driverList{
-    margin-top: 1em;
+.priceLabel{
+    color: green;
+    position: relative;
+    top: 4em;
+    font-weight: bold;
+    margin: 0;
+}
+
+.priceLabelDiv{
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+.constructorImg{
+    height: 2.5em;
+    max-width: 6em;
+}
+
+.teamList{
     width: 30em;
-    max-height: 77vh;
+    max-height: 90vh;
     overflow-y: scroll;
     background-color: rgb(41, 41, 49);
 }
@@ -43,19 +64,25 @@
     /* border-radius: 5px; */
     align-self: center;
     margin-left: 0.5em;
+    margin-right: 0.5em;
 }
 
 .budget{
     margin-top: 1em;
     display: flex;
+    color: white;
 }
 
 .break{
     flex-basis: 100%;
     width: 0;
+    height: 0;
+}
+.saveTeamButton{
+    margin-bottom: 1em;
 }
 
-.selectorButton{
+.selectorButton, .saveTeamButton{
     width: 10em;
     height: 2.5em;
     align-self: center;
@@ -64,9 +91,10 @@
     background-color: rgb(71, 78, 95);
     color: white;
     border-color: rgb(71, 78, 95);
+    margin-bottom: 1em;
 }
 
-.selectorButton:hover{
+.saveTeamButton:hover{
     background-color: rgb(87, 94, 109);
 }
 

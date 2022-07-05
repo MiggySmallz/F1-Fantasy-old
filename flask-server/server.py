@@ -260,11 +260,18 @@ def driversInfo():
     # cur.execute("INSERT INTO test2 (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
 
     driversList = []
+    constructorsList =[]
 
     for drivers in result:
         driversList.append({"id": drivers[0], "driver": drivers[1], "driverImg": drivers[2], "cost": drivers[3]})
 
-    return jsonify(driverList=driversList) 
+    cur.execute("SELECT * FROM constructors")
+    result=cur.fetchall()
+
+    for constructors in result:
+        constructorsList.append({"id": constructors[0], "constructor": constructors[1], "constructorImg": constructors[2], "cost": constructors[3]})
+
+    return jsonify(driverList=driversList, constructorList=constructorsList) 
 
 
 
