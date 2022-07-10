@@ -32,8 +32,7 @@ function App(){
   })
   .then(response => response.json())
   .then(data => setUserName(data.name));
-
-}
+  }
 
 
   

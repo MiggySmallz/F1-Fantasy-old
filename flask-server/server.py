@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import driver
 from urllib import response
 from flask import Flask, jsonify, send_file, request, url_for
 from wsgiref.validate import validator
@@ -111,7 +112,7 @@ def getRaceResults():
     for key in list(swapedKeyVal.keys()):
         swapedKeyVal[str(key).replace(".0", "")] = swapedKeyVal.pop(key)
         
-    print(swapedKeyVal)
+    # print(swapedKeyVal)
     
     return jsonify(result = [raceResults], position = swapedKeyVal)
  
@@ -187,7 +188,7 @@ def logIn():
     cur.execute("SELECT count(*) FROM users WHERE pass = %s", (data["pass"]))
     result=cur.fetchone()
     password=result[0]
-    print(email > 0 and password > 0)
+    # print(email > 0 and password > 0)
 
     # cur.execute("INSERT INTO test2 (fname, lname, email, pass) VALUES (%s, %s, %s, %s )", (data["firstName"], data["lastName"], data["email"], data["pass"]))
     
@@ -271,9 +272,135 @@ def driversInfo():
     for constructors in result:
         constructorsList.append({"id": constructors[0], "constructor": constructors[1], "constructorImg": constructors[2], "cost": constructors[3]})
 
+
+    # print(driversList)
     return jsonify(driverList=driversList, constructorList=constructorsList) 
 
+@app.route('/saveTeam', methods = ['POST'])
+def saveTeam():
 
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    cur=conn.cursor()
+    # print(data["token"])
+    cur.execute("SELECT id FROM users WHERE token = %s", (data["token"]))
+    result=cur.fetchall()
+
+    userID = result[0][0]
+    teamList = {"slot1":"", "slot2":"", "slot3":"", "slot4":"", "slot5":"", "slot6":""}
+    i = 1
+
+    for info in data["team"]:
+        if (info["id"] < 21):
+            teamList["slot" + str(i)] = info["id"]
+            i += 1
+        elif (info["id"] > 100):
+            teamList["slot6"] = info["id"]
+            i += 1
+
+    # print(data["teamName"])
+
+
+    cur.execute("INSERT INTO teams (userID, slot1, slot2, slot3, slot4, slot5, slot6, maxBudget, teamName) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s )", (userID, teamList["slot1"], teamList["slot2"], teamList["slot3"], teamList["slot4"], teamList["slot5"], teamList["slot6"], data["budget"], data["teamName"]))
+    conn.commit()
+
+    return jsonify(teamList=data)  
+
+@app.route('/getUsersTeams', methods = ['POST'])
+def getUsersTeams():
+
+    data = request.get_json()
+    
+    load_dotenv()
+
+    HOST = os.getenv('HOST')
+    PORT = os.getenv('PORT')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    DB = os.getenv('DB')
+
+    conn = pymysql.connect(
+            host= HOST, 
+            port = int(PORT),
+            user = USER, 
+            password = PASSWORD,
+            db = DB,
+            )
+
+    teamList = {}
+
+    cur=conn.cursor()
+    # print(data["token"])
+    cur.execute("SELECT id FROM users WHERE token = %s", (data["token"]))
+    result=cur.fetchall()
+
+    userID = result[0][0]
+
+    cur.execute("SELECT * FROM teams WHERE userID = %s", (userID))
+    result=cur.fetchall()
+
+    # print("result is: " + str(result))
+    currentTeam = []
+    
+    for team in result:
+        # print(team)
+        # for i in range(2,len(result[1])):
+        for i in range(2,10):
+            if (i<7):
+                #driver
+                if (team[i] != 0):
+                    # print("driver: " + str(team[i]))
+                    cur.execute("SELECT * FROM drivers WHERE id = %s", (team[i]))
+                    result=cur.fetchall()[0]
+                    currentTeam.append({"cost":result[3], "driver":result[1], "driverImg":result[2], "id":result[0]})
+
+            elif (i==7):
+                #constructor
+                if (team[i] != 0):
+                    # print("constructor: " + str(team[i]))
+                    cur.execute("SELECT * FROM constructors WHERE id = %s", (team[i]))
+                    result=cur.fetchall()[0]
+                    currentTeam.append({"cost":result[3], "constructor":result[1], "constructorImg":result[2], "id":result[0]})
+
+            elif (i==8):
+                #budget
+                budget=team[i]
+                # print("budget: " + str(team[i]))
+            elif (i==9):
+                teamName = str(team[i])  
+                # print("teamName: " + str(team[i]))     
+                teamList[teamName] = currentTeam 
+                currentTeam = []
+                
+
+            
+
+           
+    cur.execute("SELECT * FROM drivers WHERE id = 14")
+    result=cur.fetchall()[0]
+
+    #cost[3], driver[1], driverIMG[2], id[0]
+        
+    # print("---------------------------------------------")
+    # print(teamList)
+
+    return jsonify(teamList=teamList, budget=budget)  
 
 if __name__ == "__main__":
     app.run(debug=True)

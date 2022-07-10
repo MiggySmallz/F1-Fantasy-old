@@ -3,14 +3,36 @@
     justify-content: center;
     width: auto;
     flex-wrap: wrap;
+    flex-direction: row;
+    background-color: rgb(41, 41, 49);
+    /* height: 100vh; */
+    color: white;
+}
+
+.teams{
+    display: inline-block;
+    width: 35%;
+    text-align: center;
+
+}
+
+
+.container-team-select{
+    vertical-align:top;
+    display: flex;
+    justify-content: center;
+    width: auto;
+    flex-wrap: wrap;
     background-color: rgb(41, 41, 49);
     height: 100vh;
+    float: right;
+    width: 65%;
 }
 
 .item-container{
     background-color: rgb(62, 62, 73);
     margin: 20px 20px 0px 20px;
-    height: 6em;
+    height: 5em;
     width: auto;
     display: flex; 
 }
@@ -20,21 +42,21 @@
 }
 
 .driverTitle{
-    font-size: 24px;
+    font-size: 18px;
     margin-left: 0.4em;
     color: white;
     min-width: 55%;
 }
 
 .driverImg{
-    height: 6em;
-    max-width: 6em;
+    height: 5em;
+    max-width: 5em;
 }
 
 .priceLabel{
     color: green;
     position: relative;
-    top: 4em;
+    top: 3.5em;
     font-weight: bold;
     margin: 0;
 }
@@ -46,15 +68,20 @@
 }
 
 .constructorImg{
-    height: 2.5em;
-    max-width: 6em;
+    height: 2em;
+    max-width: 5em;
 }
 
 .teamList{
-    width: 30em;
+    width: 25em;
+    /* height: 40em; */
     max-height: 90vh;
     overflow-y: scroll;
     background-color: rgb(41, 41, 49);
+}
+
+.teamNameInput{
+    text-align: center;
 }
 
 .progressBar{
@@ -71,13 +98,17 @@
     margin-top: 1em;
     display: flex;
     color: white;
+    align-items: center;
+    width: 80%;
 }
+
 
 .break{
     flex-basis: 100%;
     width: 0;
     height: 0;
 }
+
 .saveTeamButton{
     margin-bottom: 1em;
 }
@@ -110,6 +141,12 @@
     text-align: center;
 }
 
+.teamTitle{
+    margin-top: 1em;
+    color: white;
+    align-items: center;
+}
+
 ::-webkit-scrollbar {
     width: 12px;
     height: 10px;
@@ -119,4 +156,8 @@
     border-radius: 5px;
     background: rgba(255, 255, 255, 0.364);
   }
+  
+::-webkit-input-placeholder {
+    text-align: center;
+}
 
