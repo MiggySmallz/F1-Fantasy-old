@@ -28,9 +28,11 @@ function Fantasy(){
   
   const [budget, setBudget] = useState(100000000);
   const [constructors, setConstructors] = useState([]);
-  const [constructorBtn, setConstructorBtn] = useState("btnOff");
+  const [constructorsNoChange, setConstructorsNoChange] = useState([]);
+  const [constructorBtn, setConstructorBtn] = useState("btnOff")
   const [drivers, setDrivers] = useState([])
-  const [driverBtn, setDriverBtn] = useState("btnOn");
+  const [driversNoChange, setDriversNoChange] = useState([])
+  const [driverBtn, setDriverBtn] = useState("btnOn")
   const [hasConstructor, setHasConstructor] = useState(false)
   const [teamList, setTeamList] = useState([])
   const [teamName, setTeamName] = useState("")
@@ -116,7 +118,7 @@ function Fantasy(){
     body: JSON.stringify({}) // body data type must match "Content-Type" header
   })
   .then(response => response.json())
-  .then(data => {setDrivers(data["driverList"]); setConstructors(data["constructorList"]); console.log(drivers)})
+  .then(data => {setDrivers(data["driverList"]); setConstructors(data["constructorList"]); setDriversNoChange(data["driverList"]); setConstructorsNoChange(data["constructorList"]);})
   // .then(console.log(drivers));
   }
 
@@ -155,20 +157,44 @@ function Fantasy(){
 
   const addToTeamList = (team) => {
     setTeamList(team)
+
+    setDrivers(driversNoChange)
+    setConstructors(constructorsNoChange)
+    
+    let newDriversList = driversNoChange;
+    let newConstructorsList = constructorsNoChange;
+    let newDriversListFiltered = [];
+    let newConstructorsListFiltered = [];
+    let isConstructor = false
+
+    // console.log(newDriversList.driver)
+    // console.log(newConstructorsList[0].constructor)
+
     for (let i = 0; i < team.length; i++){
-      
       if (team[i]["driver"] != undefined){
-        console.log("deleting" + team[i]["driver"])
-        setDrivers(drivers.filter(item => item.driver !== team[i]["driver"]))
-        // setBudget(budget-team[i]["cost"])
-        
+        // console.log(driversListNoChange)
+        // console.log(newDriversList)
+        newDriversListFiltered = newDriversList.filter(item => item.driver !== team[i]["driver"])
       }
       else{
-        setConstructors(constructors.filter(item => item.constructor !== team[i]["constructor"]))
-        // setBudget(budget-team[i]["cost"])
-        setHasConstructor(true)
+        // console.log(constructors)
+        // console.log(newConstructorsList)
+        newConstructorsListFiltered = newConstructorsList.filter(items => items.constructor !== team[i]["constructor"])
+        isConstructor = true
       }
+      newDriversList = newDriversListFiltered
     }
+    newConstructorsList = newConstructorsListFiltered
+    
+    if (isConstructor == true){
+      setConstructors(newConstructorsList)
+    }
+
+    setDrivers(newDriversList)
+    
+
+    
+
   }
 
   return (
@@ -196,7 +222,7 @@ function Fantasy(){
               <button  onClick={() => handleOnClick()} >Save Team</button>
             </div>
             { teamList.sort((a, b) => a.id > b.id ? 1 : -1).map((item) =>{
-              if (item.driverImg != null){
+              if (item.driver != null){
                 return(
                   <div onClick={() => removeDriver(item)} className='item-container'>
                     <img className='driverImg' src={item.driverImg} width="500" height="600"></img>
@@ -224,18 +250,6 @@ function Fantasy(){
               }
             })}
 
-            {/* {(teamName != "") ? 
-            (
-              null
-            ) 
-            : 
-            (
-              <div className="selectorButtons">
-              <button className="saveTeamButton" onClick={() => saveTeam()} >Save Team</button>
-              </div>
-            )
-            } */}
-
         </div>
         <div className='break-column'></div>
         <div className='teamList'>
@@ -244,9 +258,9 @@ function Fantasy(){
           <button id={constructorBtn} className="selectorButton" onClick={() => {setConstructorBtn((constructorBtn) => (constructorBtn === "btnOff" ? "btnOn" : "btnOff")); setDriverBtn((driverBtn) => (driverBtn === "btnOn" ? "btnOff" : "btnOn"))}} >Constructors</button>
         </div>
             
-
             { (driverBtn === "btnOn")?
             (drivers.sort((a, b) => a.cost < b.cost ? 1 : -1).map((item) =>{
+
               return(
                 <div onClick={() => addDriver(item)} className='item-container'>
                   
